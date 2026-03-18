@@ -1,3 +1,22 @@
+// Check if the timer should reset (finished on a previous calendar day)
+// Keeps settings (mode, limits) but resets counters so kids get a fresh daily allowance
+function checkMidnightReset(data) {
+  if (!data || !data.finished) return data;
+  const startDate = new Date(data.startedAt).toDateString();
+  const today = new Date().toDateString();
+  if (startDate === today) return data;
+
+  // New day — reset counters, keep limits
+  data.active = true;
+  data.finished = false;
+  data.accumulatedTime = 0;
+  data.episodesWatched = 0;
+  data.remindersShown = [];
+  data.startedAt = Date.now();
+  chrome.storage.local.set({ adhdTimer: data });
+  return data;
+}
+
 // Inject content script into a tab if not already present
 function ensureContentScript(tabId) {
   chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] }).catch(() => {});
@@ -21,7 +40,8 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
 
   // Ensure content script is injected on SPA navigations (Netflix doesn't do full page loads)
   chrome.storage.local.get(['adhdTimer'], (result) => {
-    if (result.adhdTimer && result.adhdTimer.active) {
+    const data = checkMidnightReset(result.adhdTimer);
+    if (data && data.active) {
       ensureContentScript(details.tabId);
     }
   });
@@ -30,7 +50,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
   if (!previousVideoId) return;
 
   chrome.storage.local.get(['adhdTimer'], (result) => {
-    const data = result.adhdTimer;
+    const data = checkMidnightReset(result.adhdTimer);
     if (!data || !data.active) return;
 
     data.episodesWatched = (data.episodesWatched || 0) + 1;
@@ -68,7 +88,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'ADHD_GET_STATE') {
     chrome.storage.local.get(['adhdTimer'], (result) => {
-      sendResponse(result.adhdTimer || null);
+      sendResponse(checkMidnightReset(result.adhdTimer) || null);
     });
     return true;
   }

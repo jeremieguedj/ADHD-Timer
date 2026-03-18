@@ -48,9 +48,25 @@ modeRadios.forEach(radio => {
 maxMinutesInput.addEventListener('input', updateThresholdDisplay);
 maxEpisodesInput.addEventListener('input', updateThresholdDisplay);
 
+// Check if finished timer should reset (new calendar day)
+function checkMidnightReset(data) {
+  if (!data || !data.finished) return data;
+  const startDate = new Date(data.startedAt).toDateString();
+  const today = new Date().toDateString();
+  if (startDate === today) return data;
+  data.active = true;
+  data.finished = false;
+  data.accumulatedTime = 0;
+  data.episodesWatched = 0;
+  data.remindersShown = [];
+  data.startedAt = Date.now();
+  chrome.storage.local.set({ adhdTimer: data });
+  return data;
+}
+
 // Load saved settings
 chrome.storage.local.get(['adhdTimer', 'adhdBunnyName', 'adhdNextActivity', 'adhdSoundEnabled'], (result) => {
-  const data = result.adhdTimer;
+  const data = checkMidnightReset(result.adhdTimer);
 
   if (result.adhdBunnyName) bunnyNameInput.value = result.adhdBunnyName;
   if (result.adhdNextActivity) nextActivityInput.value = result.adhdNextActivity;

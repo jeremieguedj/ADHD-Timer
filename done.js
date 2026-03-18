@@ -102,11 +102,11 @@
     style.textContent = `
       .bunny-sprite-celebrate {
         background: url('${url}') 0 0 no-repeat;
-        background-size: 2960px 200px;
-        animation: sprite-celebrate 0.8s steps(16) infinite;
+        background-size: 4440px 200px;
+        animation: sprite-celebrate 2s steps(24) infinite;
       }
       @keyframes sprite-celebrate {
-        to { background-position: -2960px 0; }
+        to { background-position: -4440px 0; }
       }
     `;
     document.head.appendChild(style);

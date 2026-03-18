@@ -40,10 +40,11 @@
   ];
 
   // Sprite sheet configurations (generated from Veo 3.1 animations)
+  // 24 frames per sprite. Duration = frames / target_fps (~12fps for smooth, relaxed motion).
   const SPRITES = {
-    happy:  { file: 'icons/bunny-walk-sprite.png',      fw: 124, fh: 200, frames: 16, sw: 1984, duration: '0.8s' },
-    sleepy: { file: 'icons/bunny-sleepy-sprite.png',     fw: 136, fh: 200, frames: 16, sw: 2176, duration: '1.2s' },
-    wave:   { file: 'icons/bunny-celebrate-sprite.png',  fw: 185, fh: 200, frames: 16, sw: 2960, duration: '0.8s' },
+    happy:  { file: 'icons/bunny-walk-sprite.png',      fw: 124, fh: 200, frames: 24, sw: 2976, duration: '2s' },
+    sleepy: { file: 'icons/bunny-sleepy-sprite.png',     fw: 136, fh: 200, frames: 24, sw: 3264, duration: '3s' },
+    wave:   { file: 'icons/bunny-celebrate-sprite.png',  fw: 185, fh: 200, frames: 24, sw: 4440, duration: '2s' },
   };
 
   // Inject sprite animation CSS (needs chrome.runtime.getURL for image paths)
@@ -864,10 +865,27 @@
     });
   });
 
+  // Check if finished timer should reset (new calendar day)
+  function checkMidnightReset(data) {
+    if (!data || !data.finished) return data;
+    const startDate = new Date(data.startedAt).toDateString();
+    const today = new Date().toDateString();
+    if (startDate === today) return data;
+    data.active = true;
+    data.finished = false;
+    data.accumulatedTime = 0;
+    data.episodesWatched = 0;
+    data.remindersShown = [];
+    data.startedAt = Date.now();
+    chrome.storage.local.set({ adhdTimer: data });
+    return data;
+  }
+
   // Restore state on page load/refresh
   chrome.storage.local.get(['adhdTimer'], (result) => {
-    if (result.adhdTimer && result.adhdTimer.active) {
-      init(result.adhdTimer);
+    const data = checkMidnightReset(result.adhdTimer);
+    if (data && data.active) {
+      init(data);
     }
   });
 })();
