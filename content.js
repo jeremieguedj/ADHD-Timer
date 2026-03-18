@@ -39,119 +39,36 @@
     '#ec407a', // pink
   ];
 
-  // Bunny SVG — happy pose (both arms raised, big smile)
-  const BUNNY_HAPPY_SVG = `
-    <svg class="bunny-svg" width="120" height="160" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- Left ear -->
-      <ellipse cx="38" cy="30" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="38" cy="30" rx="7" ry="25" fill="#ffb6c1"/>
-      <!-- Right ear -->
-      <ellipse cx="82" cy="30" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="82" cy="30" rx="7" ry="25" fill="#ffb6c1"/>
-      <!-- Body -->
-      <ellipse cx="60" cy="110" rx="35" ry="40" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Head -->
-      <circle cx="60" cy="75" r="30" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Eyes -->
-      <circle cx="48" cy="70" r="4" fill="#333"/>
-      <circle cx="72" cy="70" r="4" fill="#333"/>
-      <!-- Eye shine -->
-      <circle cx="49.5" cy="68.5" r="1.5" fill="#fff"/>
-      <circle cx="73.5" cy="68.5" r="1.5" fill="#fff"/>
-      <!-- Nose -->
-      <ellipse cx="60" cy="80" rx="3" ry="2.5" fill="#ffb6c1"/>
-      <!-- Mouth -->
-      <path d="M56 84 Q60 88 64 84" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
-      <!-- Cheeks -->
-      <circle cx="40" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
-      <circle cx="80" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
-      <!-- Left arm (raised greeting) -->
-      <path d="M28 105 Q18 88 22 70" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <path d="M28 105 Q18 88 22 70" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="22" cy="67" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Right arm (raised greeting) -->
-      <path d="M92 105 Q102 88 98 70" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <path d="M92 105 Q102 88 98 70" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="98" cy="67" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Feet -->
-      <ellipse cx="45" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="75" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-    </svg>`;
+  // Sprite sheet configurations (generated from Veo 3.1 animations)
+  const SPRITES = {
+    happy:  { file: 'icons/bunny-walk-sprite.png',      fw: 124, fh: 200, frames: 16, sw: 1984, duration: '0.8s' },
+    sleepy: { file: 'icons/bunny-sleepy-sprite.png',     fw: 136, fh: 200, frames: 16, sw: 2176, duration: '1.2s' },
+    wave:   { file: 'icons/bunny-celebrate-sprite.png',  fw: 185, fh: 200, frames: 16, sw: 2960, duration: '0.8s' },
+  };
 
-  // Bunny SVG — sleepy pose (half-closed eyes, arms down, head tilt)
-  const BUNNY_SLEEPY_SVG = `
-    <svg class="bunny-svg" width="120" height="160" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
-      <!-- Left ear (drooping slightly) -->
-      <ellipse cx="36" cy="32" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1" transform="rotate(-5 36 32)"/>
-      <ellipse cx="36" cy="32" rx="7" ry="25" fill="#ffb6c1" transform="rotate(-5 36 32)"/>
-      <!-- Right ear (drooping slightly) -->
-      <ellipse cx="84" cy="32" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1" transform="rotate(5 84 32)"/>
-      <ellipse cx="84" cy="32" rx="7" ry="25" fill="#ffb6c1" transform="rotate(5 84 32)"/>
-      <!-- Body -->
-      <ellipse cx="60" cy="112" rx="35" ry="40" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Head (slight tilt) -->
-      <circle cx="60" cy="77" r="30" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Eyes (half-closed — sleepy) -->
-      <path d="M44 70 Q48 68 52 70" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M68 70 Q72 68 76 70" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- Nose -->
-      <ellipse cx="60" cy="80" rx="3" ry="2.5" fill="#ffb6c1"/>
-      <!-- Mouth (small gentle smile) -->
-      <path d="M57 84 Q60 86 63 84" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
-      <!-- Cheeks -->
-      <circle cx="40" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
-      <circle cx="80" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
-      <!-- Left arm (down, relaxed) -->
-      <path d="M28 100 Q22 115 26 130" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <path d="M28 100 Q22 115 26 130" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="26" cy="133" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Right arm (down, relaxed) -->
-      <path d="M92 100 Q98 115 94 130" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <path d="M92 100 Q98 115 94 130" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="94" cy="133" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Feet -->
-      <ellipse cx="45" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="75" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Zzz -->
-      <text x="90" y="55" fill="#aaa" font-size="14" font-weight="700" font-family="sans-serif" opacity="0.6">z</text>
-      <text x="98" y="44" fill="#aaa" font-size="11" font-weight="700" font-family="sans-serif" opacity="0.4">z</text>
-    </svg>`;
-
-  // Bunny SVG — wave pose (for final overlay, goodbye)
-  const BUNNY_WAVE_SVG = `
-    <svg class="bunny-svg" width="140" height="180" viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg">
-      <!-- Left ear -->
-      <ellipse cx="48" cy="30" rx="14" ry="40" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="48" cy="30" rx="8" ry="28" fill="#ffb6c1"/>
-      <!-- Right ear -->
-      <ellipse cx="92" cy="30" rx="14" ry="40" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="92" cy="30" rx="8" ry="28" fill="#ffb6c1"/>
-      <!-- Body -->
-      <ellipse cx="70" cy="125" rx="40" ry="45" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Head -->
-      <circle cx="70" cy="82" r="35" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Eyes (happy, closed) -->
-      <path d="M55 76 Q59 72 63 76" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M77 76 Q81 72 85 76" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- Nose -->
-      <ellipse cx="70" cy="87" rx="3.5" ry="3" fill="#ffb6c1"/>
-      <!-- Mouth (big smile) -->
-      <path d="M60 92 Q70 100 80 92" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-      <!-- Cheeks -->
-      <circle cx="48" cy="88" r="6" fill="#ffb6c1" opacity="0.4"/>
-      <circle cx="92" cy="88" r="6" fill="#ffb6c1" opacity="0.4"/>
-      <!-- Left arm (waving) -->
-      <path d="M32 115 Q15 90 25 60" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
-      <path d="M32 115 Q15 90 25 60" fill="none" stroke="#e0e0e0" stroke-width="9" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="25" cy="57" r="6" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Right arm (waving) -->
-      <path d="M108 115 Q125 90 115 60" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
-      <path d="M108 115 Q125 90 115 60" fill="none" stroke="#e0e0e0" stroke-width="9" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="115" cy="57" r="6" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <!-- Feet -->
-      <ellipse cx="52" cy="168" rx="16" ry="9" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-      <ellipse cx="88" cy="168" rx="16" ry="9" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-    </svg>`;
+  // Inject sprite animation CSS (needs chrome.runtime.getURL for image paths)
+  function injectSpriteStyles() {
+    if (document.getElementById('adhd-sprite-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'adhd-sprite-styles';
+    let css = '';
+    for (const [pose, s] of Object.entries(SPRITES)) {
+      const url = chrome.runtime.getURL(s.file);
+      css += `
+        .bunny-sprite-${pose} {
+          width: ${s.fw}px; height: ${s.fh}px;
+          background: url('${url}') 0 0 no-repeat;
+          background-size: ${s.sw}px ${s.fh}px;
+          animation: sprite-${pose} ${s.duration} steps(${s.frames}) infinite;
+        }
+        @keyframes sprite-${pose} {
+          to { background-position: -${s.sw}px 0; }
+        }
+      `;
+    }
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
 
   // Small bunny head icon for timer
   const BUNNY_ICON_SVG = `
@@ -353,25 +270,24 @@
   // Create bunny container
   function createBunnyContainer() {
     if (bunnyEl) return;
+    injectSpriteStyles();
     bunnyEl = document.createElement('div');
     bunnyEl.id = 'adhd-bunny-container';
     bunnyEl.innerHTML = `
       <div class="bunny-walker">
         <div class="speech-bubble"></div>
-        ${BUNNY_HAPPY_SVG}
+        <div class="bunny-sprite bunny-sprite-happy"></div>
       </div>
     `;
     document.body.appendChild(bunnyEl);
   }
 
-  // Get bunny SVG by pose
-  function getBunnySVG(pose) {
-    switch (pose) {
-      case 'sleepy': return BUNNY_SLEEPY_SVG;
-      case 'wave': return BUNNY_WAVE_SVG;
-      case 'happy':
-      default: return BUNNY_HAPPY_SVG;
-    }
+  // Switch bunny sprite pose
+  function setBunnyPose(pose) {
+    if (!bunnyEl) return;
+    const sprite = bunnyEl.querySelector('.bunny-sprite');
+    if (!sprite) return;
+    sprite.className = `bunny-sprite bunny-sprite-${pose}`;
   }
 
   // Position switching — toggle left/right every 90s
@@ -412,14 +328,9 @@
     bunnyShowing = true;
     if (!bunnyEl) createBunnyContainer();
 
-    // Swap bunny SVG based on pose
+    // Swap bunny sprite based on pose
     const walker = bunnyEl.querySelector('.bunny-walker');
-    const oldSvg = bunnyEl.querySelector('.bunny-svg');
-    if (oldSvg) {
-      const temp = document.createElement('div');
-      temp.innerHTML = getBunnySVG(pose);
-      oldSvg.replaceWith(temp.firstElementChild);
-    }
+    setBunnyPose(pose);
 
     const bubble = bunnyEl.querySelector('.speech-bubble');
     bubble.textContent = message;

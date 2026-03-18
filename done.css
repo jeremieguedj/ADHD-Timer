@@ -75,38 +75,23 @@ body {
 @keyframes bunnyEntrance {
   from {
     opacity: 0;
-    transform: scale(0.3) translateY(100px);
+    transform: scale(0.6) translateY(100px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(2) translateY(0);
   }
 }
 
 #big-bunny {
-  width: clamp(200px, 45vh, 450px);
-  height: auto;
+  width: 185px;
+  height: 200px;
   filter: drop-shadow(0 10px 40px rgba(0,0,0,0.5));
-  animation: bunnyJump 0.7s ease-in-out infinite;
+  transform: scale(2);
+  transform-origin: center center;
 }
 
-@keyframes bunnyJump {
-  0%, 100% {
-    transform: translateY(0) scaleY(1) scaleX(1);
-  }
-  15% {
-    transform: translateY(0) scaleY(0.85) scaleX(1.08);
-  }
-  40% {
-    transform: translateY(-60px) scaleY(1.1) scaleX(0.95);
-  }
-  60% {
-    transform: translateY(-60px) scaleY(1.05) scaleX(0.97);
-  }
-  80% {
-    transform: translateY(0) scaleY(0.92) scaleX(1.04);
-  }
-}
+/* Sprite animation for celebration bunny — injected by done.js */
 
 /* Floating stars background */
 #stars {

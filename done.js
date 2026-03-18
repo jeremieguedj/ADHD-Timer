@@ -93,7 +93,27 @@
     btn.addEventListener('touchcancel', cancelHold);
   }
 
+  // Set up celebration sprite animation
+  function setupCelebrationSprite() {
+    const bunny = document.getElementById('big-bunny');
+    if (!bunny) return;
+    const url = chrome.runtime.getURL('icons/bunny-celebrate-sprite.png');
+    const style = document.createElement('style');
+    style.textContent = `
+      .bunny-sprite-celebrate {
+        background: url('${url}') 0 0 no-repeat;
+        background-size: 2960px 200px;
+        animation: sprite-celebrate 0.8s steps(16) infinite;
+      }
+      @keyframes sprite-celebrate {
+        to { background-position: -2960px 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   // Init
+  setupCelebrationSprite();
   createStars();
   loadAndPersonalize();
   setupParentOverride();

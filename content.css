@@ -198,20 +198,11 @@
   border-top: 12px solid #fff;
 }
 
-/* Bunny SVG — bigger during walk */
-#adhd-bunny-container .bunny-svg {
+/* Bunny sprite — animated via sprite sheet */
+#adhd-bunny-container .bunny-sprite {
   filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
-  width: 160px;
-  height: auto;
-}
-
-@keyframes bunny-hop {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-18px); }
-}
-
-#adhd-bunny-container.visible .bunny-svg {
-  animation: bunny-hop 0.5s ease-in-out infinite;
+  transform: scale(1.2);
+  transform-origin: bottom center;
 }
 
 /* Final overlay */
