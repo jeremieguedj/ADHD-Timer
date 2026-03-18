@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Screenshot 2 — Bunny Reminder</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1280px; height: 800px; overflow: hidden; }
+body {
+  background: #141414;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+}
+
+.netflix-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 30%, #0d0d1f 70%, #141414 100%);
+}
+
+.show-title {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+.scene {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 340px;
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0.1;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.netflix-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px 16px;
+}
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}
+.progress-fill {
+  width: 72%;
+  height: 100%;
+  background: #e50914;
+  border-radius: 2px;
+}
+
+/* Timer overlay — smaller, top right */
+.timer-overlay {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.timer-circle {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  background: #fff;
+  border-radius: 50%;
+  border: 4px solid #222;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  overflow: hidden;
+}
+.timer-circle svg {
+  width: 100%; height: 100%;
+  position: absolute; top: 0; left: 0;
+}
+.timer-time {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 26px;
+  font-weight: 800;
+  color: #222;
+  z-index: 1;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bunny walking across the screen */
+.bunny-container {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.speech-bubble {
+  background: #fff;
+  color: #333;
+  padding: 18px 28px;
+  border-radius: 22px;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+  text-align: center;
+  white-space: nowrap;
+}
+.speech-bubble::after {
+  content: '';
+  display: block;
+  width: 0; height: 0;
+  margin: 0 auto;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid #fff;
+}
+
+.bunny-svg {
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
+}
+
+/* Caption bar */
+.caption-bar {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.caption-bar .caption-icon { font-size: 28px; }
+.caption-bar .caption-text {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.caption-bar .caption-sub {
+  color: #aaa;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+  <div class="netflix-bg"></div>
+  <div class="scene"></div>
+  <div class="show-title">S1:E3 · "The Adventure Begins"</div>
+
+  <div class="netflix-bar">
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- Timer -->
+  <div class="timer-overlay">
+    <div class="timer-circle">
+      <svg viewBox="0 0 140 140">
+        <path d="M 70 70 L 70 5 A 65 65 0 0 1 127.19 100.89 Z" fill="#26a69a"/>
+      </svg>
+      <div class="timer-time">4:52</div>
+    </div>
+  </div>
+
+  <!-- Bunny walking with speech bubble -->
+  <div class="bunny-container">
+    <div class="speech-bubble">Only 5 minutes left! Winding down...</div>
+    <svg class="bunny-svg" width="180" height="240" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left ear (drooping slightly) -->
+      <ellipse cx="36" cy="32" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1" transform="rotate(-5 36 32)"/>
+      <ellipse cx="36" cy="32" rx="7" ry="25" fill="#ffb6c1" transform="rotate(-5 36 32)"/>
+      <!-- Right ear (drooping slightly) -->
+      <ellipse cx="84" cy="32" rx="12" ry="35" fill="#fff" stroke="#e0e0e0" stroke-width="1" transform="rotate(5 84 32)"/>
+      <ellipse cx="84" cy="32" rx="7" ry="25" fill="#ffb6c1" transform="rotate(5 84 32)"/>
+      <!-- Body -->
+      <ellipse cx="60" cy="112" rx="35" ry="40" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <!-- Head -->
+      <circle cx="60" cy="77" r="30" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <!-- Eyes (half-closed — sleepy) -->
+      <path d="M44 70 Q48 68 52 70" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M68 70 Q72 68 76 70" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Nose -->
+      <ellipse cx="60" cy="80" rx="3" ry="2.5" fill="#ffb6c1"/>
+      <!-- Mouth -->
+      <path d="M57 84 Q60 86 63 84" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Cheeks -->
+      <circle cx="40" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
+      <circle cx="80" cy="80" r="5" fill="#ffb6c1" opacity="0.4"/>
+      <!-- Left arm (down) -->
+      <path d="M28 100 Q22 115 26 130" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M28 100 Q22 115 26 130" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+      <circle cx="26" cy="133" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <!-- Right arm (down) -->
+      <path d="M92 100 Q98 115 94 130" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M92 100 Q98 115 94 130" fill="none" stroke="#e0e0e0" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+      <circle cx="94" cy="133" r="5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <!-- Feet -->
+      <ellipse cx="45" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <ellipse cx="75" cy="148" rx="14" ry="8" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+      <!-- Zzz -->
+      <text x="90" y="55" fill="#aaa" font-size="14" font-weight="700" font-family="sans-serif" opacity="0.6">z</text>
+      <text x="98" y="44" fill="#aaa" font-size="11" font-weight="700" font-family="sans-serif" opacity="0.4">z</text>
+    </svg>
+  </div>
+
+  <!-- Caption -->
+  <div class="caption-bar">
+    <span class="caption-icon">🐰</span>
+    <div>
+      <div class="caption-text">Friendly bunny walks across with gentle reminders</div>
+      <div class="caption-sub">Pauses the show briefly — graduated warnings, never a sudden cutoff</div>
+    </div>
+  </div>
+</body>
+</html>

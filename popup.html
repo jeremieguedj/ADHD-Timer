@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <h1>🐰 ADHD Timer</h1>
+    <p class="subtitle">Gentle reminders with a bunny friend when screen time is ending</p>
+
+    <div class="mode-selector">
+      <label class="mode-option">
+        <input type="radio" name="mode" value="time" checked>
+        <span class="mode-label">Time Limit</span>
+      </label>
+      <label class="mode-option">
+        <input type="radio" name="mode" value="episode">
+        <span class="mode-label">Episode Limit</span>
+      </label>
+    </div>
+
+    <!-- Quick presets -->
+    <div id="time-presets" class="presets">
+      <button class="preset-chip" data-mode="time" data-value="30">30 min</button>
+      <button class="preset-chip" data-mode="time" data-value="45">45 min</button>
+      <button class="preset-chip" data-mode="time" data-value="60">1 hour</button>
+      <button class="preset-chip" data-mode="time" data-value="90">1.5 hr</button>
+    </div>
+
+    <div id="episode-presets" class="presets" style="display:none;">
+      <button class="preset-chip" data-mode="episode" data-value="1">1 ep</button>
+      <button class="preset-chip" data-mode="episode" data-value="2">2 ep</button>
+      <button class="preset-chip" data-mode="episode" data-value="3">3 ep</button>
+    </div>
+
+    <div id="time-settings" class="settings-group">
+      <label for="max-minutes">Minutes allowed:</label>
+      <input type="number" id="max-minutes" min="1" max="480" value="30">
+    </div>
+
+    <div id="episode-settings" class="settings-group" style="display:none;">
+      <label for="max-episodes">Episodes allowed:</label>
+      <input type="number" id="max-episodes" min="1" max="20" value="2">
+    </div>
+
+    <button id="start-btn" class="btn btn-start">Start Timer</button>
+
+    <div id="active-controls" style="display:none;">
+      <div class="btn-row">
+        <button id="extend-btn" class="btn btn-extend">+10 min</button>
+        <button id="stop-btn" class="btn btn-stop">Stop Timer</button>
+      </div>
+      <div id="extend-hint" class="extend-hint">Hold to extend</div>
+    </div>
+
+    <div id="status" class="status">
+      <span class="status-dot inactive"></span>
+      <span id="status-text">Inactive</span>
+    </div>
+
+    <div id="details" class="details" style="display:none;">
+      <div id="detail-time" class="detail-row"></div>
+      <div id="detail-episodes" class="detail-row"></div>
+    </div>
+
+    <!-- Threshold info -->
+    <div id="threshold-info" class="threshold-info"></div>
+
+    <!-- Settings section -->
+    <div class="settings-section">
+      <details>
+        <summary class="settings-toggle">Settings</summary>
+        <div class="settings-content">
+          <label for="bunny-name">Bunny's name:</label>
+          <input type="text" id="bunny-name" value="Hoppy" maxlength="20" placeholder="Hoppy">
+
+          <label for="next-activity" class="setting-label-spaced">Suggested next activity:</label>
+          <input type="text" id="next-activity" value="" maxlength="40" placeholder="e.g. snack time, drawing, outside play">
+
+          <label class="setting-label-spaced toggle-label">
+            <input type="checkbox" id="sound-enabled">
+            <span>Sound effects</span>
+          </label>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

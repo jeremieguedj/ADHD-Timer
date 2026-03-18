@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Test</title>
+  <style>
+    body { font-family: sans-serif; background: #1a1a2e; color: #fff; padding: 40px; }
+    button { padding: 12px 24px; margin: 8px; border: none; border-radius: 8px; background: #26a69a; color: #fff; font-size: 16px; cursor: pointer; }
+    button:hover { background: #2bbbad; }
+    #status { margin-top: 20px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h1>Audio Playback Test</h1>
+  <p>Click each button to test the pre-generated bunny voice files:</p>
+
+  <button onclick="play('greeting.wav')">Greeting</button>
+  <button onclick="play('halfway.wav')">Halfway</button>
+  <button onclick="play('quarter.wav')">Quarter</button>
+  <button onclick="play('ten_minutes.wav')">10 Minutes</button>
+  <button onclick="play('five_minutes.wav')">5 Minutes</button>
+  <button onclick="play('goodbye.wav')">Goodbye</button>
+
+  <div id="status"></div>
+
+  <script>
+    function play(file) {
+      const status = document.getElementById('status');
+      status.textContent = `Playing ${file}...`;
+      const audio = new Audio(`audio/${file}`);
+      audio.volume = 0.7;
+      audio.play()
+        .then(() => { status.textContent = `Playing ${file}`; })
+        .catch(e => { status.textContent = `Error: ${e.message}`; });
+      audio.onended = () => { status.textContent = `Done: ${file}`; };
+    }
+  </script>
+</body>
+</html>

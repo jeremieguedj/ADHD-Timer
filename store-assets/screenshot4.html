@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Screenshot 4 — Popup UI</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1280px; height: 800px; overflow: hidden; }
+body {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Fake Chrome toolbar */
+.chrome-toolbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 72px;
+  background: #292b2f;
+  border-bottom: 1px solid #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 28px 20px 0;
+  gap: 8px;
+}
+.chrome-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #3c4043;
+  border-radius: 8px 8px 0 0;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+.chrome-tab.active {
+  background: #202124;
+}
+.chrome-dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-red { background: #ff5f57; }
+.dot-yellow { background: #febc2e; }
+.dot-green { background: #28c840; }
+
+/* Netflix URL bar */
+.url-bar {
+  position: absolute;
+  top: 72px; left: 0; right: 0;
+  height: 44px;
+  background: #202124;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  border-bottom: 1px solid #333;
+}
+.url-text {
+  flex: 1;
+  background: #303134;
+  border-radius: 20px;
+  padding: 6px 16px;
+  color: #bbb;
+  font-size: 14px;
+}
+.extension-icon {
+  width: 24px; height: 24px;
+  background: #26a69a;
+  border-radius: 4px;
+  position: relative;
+}
+.extension-icon::after {
+  content: '🐰';
+  font-size: 14px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Popup frame — scaled up for visibility */
+.popup-frame {
+  position: relative;
+  width: 450px;
+  background: #1a1a2e;
+  border-radius: 12px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+  padding: 30px;
+  margin-top: 40px;
+}
+
+/* Connector line from extension icon to popup */
+.connector {
+  position: absolute;
+  top: 116px;
+  right: 190px;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(38,166,154,0.5), rgba(38,166,154,0));
+}
+.connector::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background: #26a69a;
+  border-radius: 50%;
+}
+
+h1 { font-size: 28px; text-align: center; color: #fff; margin-bottom: 4px; }
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 22px;
+  line-height: 1.4;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.mode-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2.5px solid #16213e;
+  background: #16213e;
+  color: #bbb;
+  cursor: pointer;
+}
+.mode-btn.active {
+  border-color: #26a69a;
+  background: #1a1a3e;
+  color: #fff;
+}
+
+.presets {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.preset-chip {
+  flex: 1;
+  padding: 8px 6px;
+  border: 2px solid #26a69a;
+  border-radius: 8px;
+  background: transparent;
+  color: #26a69a;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+.preset-chip.selected {
+  background: #26a69a;
+  color: #fff;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: #bbb;
+  margin-bottom: 8px;
+}
+.input-group input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2.5px solid #16213e;
+  background: #0f3460;
+  color: #fff;
+  font-size: 20px;
+  outline: none;
+  text-align: center;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #26a69a;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 15px;
+  color: #999;
+}
+.status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #555;
+}
+
+/* Feature callouts on the sides */
+.callout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+.callout-left {
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row;
+}
+.callout-right {
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row-reverse;
+}
+.callout-line {
+  width: 60px;
+  height: 2px;
+  background: rgba(38,166,154,0.4);
+}
+.callout-content {
+  max-width: 200px;
+}
+.callout-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #26a69a;
+  margin-bottom: 4px;
+}
+.callout-desc {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.4;
+}
+
+/* Caption bar */
+.caption-bar {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.caption-bar .caption-icon { font-size: 28px; }
+.caption-bar .caption-text {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.caption-bar .caption-sub {
+  color: #aaa;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+  <!-- Fake Chrome toolbar -->
+  <div class="chrome-toolbar">
+    <div style="display:flex;gap:6px;margin-right:12px;">
+      <div class="chrome-dot dot-red"></div>
+      <div class="chrome-dot dot-yellow"></div>
+      <div class="chrome-dot dot-green"></div>
+    </div>
+    <div class="chrome-tab active">Netflix</div>
+  </div>
+  <div class="url-bar">
+    <div class="url-text">netflix.com/watch/81234567</div>
+    <div class="extension-icon"></div>
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-frame">
+    <h1>🐰 ADHD Timer</h1>
+    <p class="subtitle">Gentle reminders with a bunny friend when screen time is ending</p>
+
+    <div class="mode-selector">
+      <div class="mode-btn active">Time Limit</div>
+      <div class="mode-btn">Episode Limit</div>
+    </div>
+
+    <div class="presets">
+      <div class="preset-chip">30 min</div>
+      <div class="preset-chip selected">45 min</div>
+      <div class="preset-chip">1 hour</div>
+      <div class="preset-chip">1.5 hr</div>
+    </div>
+
+    <div class="input-group">
+      <label>Minutes allowed:</label>
+      <input type="text" value="45" readonly>
+    </div>
+
+    <div class="start-btn">Start Timer</div>
+
+    <div class="status">
+      <div class="status-dot"></div>
+      Inactive
+    </div>
+  </div>
+
+  <!-- Feature callouts -->
+  <div class="callout callout-left" style="top: 35%;">
+    <div class="callout-content">
+      <div class="callout-title">Time or Episodes</div>
+      <div class="callout-desc">Set limits by minutes or number of episodes</div>
+    </div>
+    <div class="callout-line"></div>
+  </div>
+
+  <div class="callout callout-right" style="top: 35%;">
+    <div class="callout-content">
+      <div class="callout-title">Quick Presets</div>
+      <div class="callout-desc">One-tap time presets for busy parents</div>
+    </div>
+    <div class="callout-line"></div>
+  </div>
+
+  <div class="callout callout-left" style="top: 65%;">
+    <div class="callout-content">
+      <div class="callout-title">Customize</div>
+      <div class="callout-desc">Name the bunny, suggest a next activity, toggle sounds</div>
+    </div>
+    <div class="callout-line"></div>
+  </div>
+
+  <div class="callout callout-right" style="top: 65%;">
+    <div class="callout-content">
+      <div class="callout-title">Extend or Stop</div>
+      <div class="callout-desc">Hold to extend 10 min — no arguments needed</div>
+    </div>
+    <div class="callout-line"></div>
+  </div>
+
+  <!-- Caption -->
+  <div class="caption-bar">
+    <span class="caption-icon">⚙️</span>
+    <div>
+      <div class="caption-text">Simple setup — parents configure in seconds</div>
+      <div class="caption-sub">Set time or episode limits, name the bunny, choose a next activity</div>
+    </div>
+  </div>
+</body>
+</html>

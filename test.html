@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ADHD Timer V2 - Test Harness</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+    .test-controls {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 2147483647;
+      background: rgba(0,0,0,0.9); padding: 12px 16px; display: flex; gap: 6px;
+      align-items: center; flex-wrap: wrap; border-top: 2px solid #26a69a;
+    }
+    .test-controls button {
+      padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer;
+      font-size: 11px; font-weight: 600;
+    }
+    .test-controls button.primary { background: #26a69a; color: #fff; }
+    .test-controls button.secondary { background: #333; color: #fff; }
+    .test-controls button.warn { background: #e65100; color: #fff; }
+    .test-controls .info { font-size: 11px; color: #aaa; width: 100%; margin-top: 4px; }
+    .test-controls .info b { color: #fff; }
+    video { width: 100%; height: calc(100vh - 80px); background: #000; object-fit: contain; }
+  </style>
+  <link rel="stylesheet" href="content.css">
+</head>
+<body>
+  <video id="test-video" autoplay loop muted></video>
+
+  <div class="test-controls">
+    <button class="primary" onclick="startTimeMode(60)">Time 60m</button>
+    <button class="primary" onclick="startTimeMode(2)">Time 2m</button>
+    <button class="primary" onclick="startEpisodeMode(3)">3 Eps</button>
+    <button class="primary" onclick="startEpisodeMode(1)">1 Ep</button>
+    <button class="secondary" onclick="seekFraction(0.55)">55%</button>
+    <button class="secondary" onclick="seekFraction(0.28)">28%</button>
+    <button class="secondary" onclick="seekFraction(0.12)">12%</button>
+    <button class="secondary" onclick="seekTo(690)">10:30 left</button>
+    <button class="secondary" onclick="seekTo(1010)">5:10 left</button>
+    <button class="secondary" onclick="seekTo(1135)">3:05 left</button>
+    <button class="warn" onclick="seekTo(1315)">0:05 left</button>
+    <button class="secondary" onclick="simEpisodeChange()">Sim Ep Change</button>
+    <button class="secondary" onclick="stopTimer()">Stop</button>
+    <div class="info">
+      <b id="vid-time">0:00</b> / <b id="vid-dur">0:00</b> |
+      State: <b id="state-info">none</b> |
+      Sound: <b id="sound-info">off</b>
+    </div>
+  </div>
+
+  <script>
+    // Mock chrome APIs
+    window.chrome = {
+      storage: {
+        local: {
+          _data: { adhdBunnyName: 'Hoppy', adhdNextActivity: 'snack time', adhdSoundEnabled: true },
+          get(keys, cb) {
+            const result = {};
+            for (const k of keys) result[k] = this._data[k];
+            cb(result);
+          },
+          set(obj, cb) {
+            Object.assign(this._data, obj);
+            if (cb) cb();
+          }
+        }
+      },
+      runtime: {
+        lastError: null,
+        onMessage: { addListener() {} },
+        sendMessage(msg, cb) {
+          // Mock TTS — no real API in test harness
+          if (msg.type === 'ADHD_TTS') {
+            console.log('[TTS mock] Would speak:', msg.text);
+            if (cb) cb({ error: 'TTS not available in test harness' });
+          }
+        }
+      }
+    };
+  </script>
+
+  <script>
+    // Animated canvas video source
+    const canvas = document.createElement('canvas');
+    canvas.width = 640; canvas.height = 360;
+    const ctx = canvas.getContext('2d');
+    let frame = 0;
+
+    function drawFrame() {
+      frame++;
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, 640, 360);
+      for (let i = 0; i < 5; i++) {
+        const x = 320 + Math.cos(frame * 0.02 + i) * 200;
+        const y = 180 + Math.sin(frame * 0.03 + i * 1.5) * 100;
+        ctx.fillStyle = `hsl(${(frame + i * 60) % 360}, 60%, 55%)`;
+        ctx.beginPath();
+        ctx.arc(x, y, 30, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#fff';
+      ctx.font = '24px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('ADHD Timer V2 Test Video', 320, 40);
+      requestAnimationFrame(drawFrame);
+    }
+    drawFrame();
+
+    const video = document.getElementById('test-video');
+    video.srcObject = canvas.captureStream(30);
+
+    // Fake time tracking
+    let fakeDuration = 1320;
+    let fakeCurrentTime = 0;
+    let lastTick = Date.now();
+
+    Object.defineProperty(video, 'duration', { get: () => fakeDuration, configurable: true });
+    Object.defineProperty(video, 'currentTime', {
+      get: () => fakeCurrentTime,
+      set: (v) => { fakeCurrentTime = v; video.dispatchEvent(new Event('timeupdate')); },
+      configurable: true
+    });
+
+    setInterval(() => {
+      if (!video.paused) {
+        const now = Date.now();
+        fakeCurrentTime += (now - lastTick) / 1000;
+        if (fakeCurrentTime >= fakeDuration) fakeCurrentTime = fakeDuration;
+        lastTick = now;
+        video.dispatchEvent(new Event('timeupdate'));
+      } else {
+        lastTick = Date.now();
+      }
+    }, 250);
+
+    // UI updates
+    setInterval(() => {
+      const fmt = (s) => `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+      document.getElementById('vid-time').textContent = fmt(fakeCurrentTime);
+      document.getElementById('vid-dur').textContent = fmt(fakeDuration);
+      document.getElementById('sound-info').textContent = chrome.storage.local._data.adhdSoundEnabled ? 'on' : 'off';
+      const el = document.getElementById('state-info');
+      let info = [];
+      if (document.getElementById('adhd-timer-overlay')) info.push('timer');
+      const b = document.getElementById('adhd-bunny-container');
+      if (b && b.classList.contains('visible')) info.push('BUNNY');
+      if (document.getElementById('adhd-final-overlay')) info.push('FINAL');
+      if (document.getElementById('adhd-winding-down')?.classList.contains('active')) info.push('GLOW');
+      const data = chrome.storage.local._data.adhdTimer;
+      if (data && data.remindersShown) info.push(`rem:[${data.remindersShown.join(',')}]`);
+      el.textContent = info.length ? info.join(', ') : 'none';
+    }, 500);
+
+    function seekTo(s) { fakeCurrentTime = s; }
+    function seekFraction(frac) { fakeCurrentTime = fakeDuration * (1 - frac); }
+
+    function startEpisodeMode(eps) {
+      fakeCurrentTime = 0;
+      document.dispatchEvent(new CustomEvent('adhd-timer-test', { detail: {
+        active: true, mode: 'episode', maxMinutes: 30, maxEpisodes: eps,
+        accumulatedTime: 0, episodesWatched: 0, startedAt: Date.now(),
+        remindersShown: [], finished: false
+      }}));
+    }
+
+    function startTimeMode(mins) {
+      fakeCurrentTime = 0;
+      document.dispatchEvent(new CustomEvent('adhd-timer-test', { detail: {
+        active: true, mode: 'time', maxMinutes: mins, maxEpisodes: 2,
+        accumulatedTime: 0, episodesWatched: 0, startedAt: Date.now(),
+        remindersShown: [], finished: false
+      }}));
+    }
+
+    function simEpisodeChange() {
+      const data = chrome.storage.local._data.adhdTimer;
+      if (!data || !data.active) return;
+      data.episodesWatched = (data.episodesWatched || 0) + 1;
+      data.remindersShown = [];
+      fakeCurrentTime = 0;
+      chrome.storage.local.set({ adhdTimer: data });
+      // Simulate the message the content script would receive
+      document.dispatchEvent(new CustomEvent('adhd-timer-test', { detail: data }));
+    }
+
+    function stopTimer() {
+      document.dispatchEvent(new CustomEvent('adhd-timer-test', { detail: { active: false } }));
+    }
+  </script>
+  <script src="content.js"></script>
+</body>
+</html>

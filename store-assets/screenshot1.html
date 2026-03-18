@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Screenshot 1 — Timer Overlay</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1280px; height: 800px; overflow: hidden; }
+body {
+  background: #141414;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+}
+
+/* Fake Netflix video frame */
+.netflix-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 30%, #0d0d1f 70%, #141414 100%);
+}
+
+/* Fake Netflix bottom bar */
+.netflix-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px 16px;
+}
+.netflix-bar .progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  position: relative;
+}
+.netflix-bar .progress-fill {
+  width: 35%;
+  height: 100%;
+  background: #e50914;
+  border-radius: 2px;
+}
+
+/* Fake show title */
+.show-title {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+/* Scene illustration — abstract animated shapes to suggest video content */
+.scene {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 340px;
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0.15;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Timer overlay — top right */
+.timer-overlay {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-circle {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  background: #fff;
+  border-radius: 50%;
+  border: 5px solid #222;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7));
+  overflow: hidden;
+}
+
+.timer-circle svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+.timer-time {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  font-weight: 800;
+  color: #222;
+  z-index: 1;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bunny icon below timer */
+.timer-bunny-icon {
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+
+/* Caption bar */
+.caption-bar {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.caption-bar .caption-icon {
+  font-size: 28px;
+}
+.caption-bar .caption-text {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.caption-bar .caption-sub {
+  color: #aaa;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+  <div class="netflix-bg"></div>
+  <div class="scene"></div>
+  <div class="show-title">S1:E3 · "The Adventure Begins"</div>
+
+  <div class="netflix-bar">
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- Timer overlay -->
+  <div class="timer-overlay">
+    <div class="timer-circle">
+      <svg viewBox="0 0 160 160">
+        <!-- Pie wedge showing ~65% remaining -->
+        <path d="M 80 80 L 80 5 A 75 75 0 1 1 14.34 46.25 Z" fill="#7c4dff"/>
+      </svg>
+      <div class="timer-time">19:32</div>
+    </div>
+    <svg class="timer-bunny-icon" width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="8" cy="5" rx="2.5" ry="6" fill="#fff" stroke="#e0e0e0" stroke-width="0.5"/>
+      <ellipse cx="8" cy="5" rx="1.5" ry="4" fill="#ffb6c1"/>
+      <ellipse cx="16" cy="5" rx="2.5" ry="6" fill="#fff" stroke="#e0e0e0" stroke-width="0.5"/>
+      <ellipse cx="16" cy="5" rx="1.5" ry="4" fill="#ffb6c1"/>
+      <circle cx="12" cy="14" r="8" fill="#fff" stroke="#e0e0e0" stroke-width="0.5"/>
+      <circle cx="9.5" cy="13" r="1.2" fill="#333"/>
+      <circle cx="14.5" cy="13" r="1.2" fill="#333"/>
+      <ellipse cx="12" cy="15.5" rx="1" ry="0.8" fill="#ffb6c1"/>
+    </svg>
+  </div>
+
+  <!-- Caption annotation -->
+  <div class="caption-bar">
+    <span class="caption-icon">🕐</span>
+    <div>
+      <div class="caption-text">Visual pie-wedge timer — always visible, never intrusive</div>
+      <div class="caption-sub">Inspired by the Time Timer — intuitive for kids who can't read clocks</div>
+    </div>
+  </div>
+</body>
+</html>

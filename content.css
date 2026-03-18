@@ -1,0 +1,335 @@
+/* ============================================
+   ADHD Netflix Timer — Content Styles V3
+   Pie-wedge timer, position switching, color cycling
+   ============================================ */
+
+/* Timer overlay — switches between left and right */
+#adhd-timer-overlay {
+  position: fixed;
+  top: 16px;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1), right 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#adhd-timer-overlay.pos-right {
+  right: 16px;
+  left: auto;
+}
+
+#adhd-timer-overlay.pos-right .timer-circle {
+  transform-origin: top right;
+}
+
+#adhd-timer-overlay.pos-left {
+  left: 16px;
+  right: auto;
+}
+
+#adhd-timer-overlay.pos-left .timer-circle {
+  transform-origin: top left;
+}
+
+/* Pie timer container — white background like Time Timer */
+#adhd-timer-overlay .timer-circle {
+  width: 130px;
+  height: 130px;
+  position: relative;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  background: #fff;
+  border-radius: 50%;
+  border: 4px solid #222;
+  transition: transform 2s ease;
+  overflow: hidden;
+}
+
+/* SVG fills the circle */
+#adhd-timer-overlay .timer-circle svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Pie wedge fill — the colored area */
+#adhd-timer-overlay .timer-circle .pie-wedge {
+  transition: fill 0.8s ease;
+}
+
+/* Time readout centered on the pie */
+#adhd-timer-overlay .timer-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 800;
+  color: #222;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.6);
+  z-index: 1;
+}
+
+/* Episode dots (replaces text labels) */
+#adhd-timer-overlay .timer-info {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  min-height: 16px;
+}
+
+#adhd-timer-overlay .episode-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #26a69a;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  transition: background 0.5s ease;
+}
+
+#adhd-timer-overlay .episode-dot.spent {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Small bunny icon below timer */
+#adhd-timer-overlay .timer-bunny-icon {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+  transition: transform 0.3s ease;
+}
+
+@keyframes bunny-icon-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+#adhd-timer-overlay .timer-bunny-icon.wiggle {
+  animation: bunny-icon-wiggle 0.5s ease 3;
+}
+
+/* Timer pulse animation for 50% reminder */
+@keyframes timer-pulse {
+  0%, 100% { transform: scale(var(--timer-scale, 1)); }
+  50% { transform: scale(calc(var(--timer-scale, 1) * 1.08)); }
+}
+
+#adhd-timer-overlay .timer-circle.pulse {
+  animation: timer-pulse 1s ease-in-out 3;
+}
+
+/* Subtle pulsating animation at 3min / 2min remaining */
+@keyframes timer-pulsate {
+  0%, 100% { transform: scale(var(--timer-scale, 1)); filter: drop-shadow(0 4px 16px rgba(0,0,0,0.7)); }
+  50% { transform: scale(calc(var(--timer-scale, 1) * 1.06)); filter: drop-shadow(0 4px 24px rgba(255,100,50,0.5)); }
+}
+
+#adhd-timer-overlay .timer-circle.pulsate {
+  animation: timer-pulsate 2.5s ease-in-out infinite;
+}
+
+/* Bunny container — walks across the screen */
+#adhd-bunny-container {
+  position: fixed;
+  bottom: 15%;
+  left: 0;
+  width: 100%;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#adhd-bunny-container.visible {
+  opacity: 1;
+}
+
+/* The bunny + bubble wrapper that walks across */
+#adhd-bunny-container .bunny-walker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-60vw);
+  transition: none;
+}
+
+#adhd-bunny-container.visible .bunny-walker {
+  transform: translateX(60vw);
+  transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Speech bubble — large, visible, above bunny */
+#adhd-bunny-container .speech-bubble {
+  background: #fff;
+  color: #333;
+  padding: 18px 28px;
+  border-radius: 22px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+  text-align: center;
+  max-width: 400px;
+  white-space: nowrap;
+}
+
+#adhd-bunny-container .speech-bubble::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  margin: 0 auto;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid #fff;
+}
+
+/* Bunny SVG — bigger during walk */
+#adhd-bunny-container .bunny-svg {
+  filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));
+  width: 160px;
+  height: auto;
+}
+
+@keyframes bunny-hop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+}
+
+#adhd-bunny-container.visible .bunny-svg {
+  animation: bunny-hop 0.5s ease-in-out infinite;
+}
+
+/* Final overlay */
+#adhd-final-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2147483647;
+  background: rgba(25, 25, 55, 0.90);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 1.2s ease-in;
+}
+
+#adhd-final-overlay.visible {
+  opacity: 1;
+}
+
+/* Bunny entrance animation in final overlay */
+#adhd-final-overlay .bunny-svg {
+  transform: scale(0.8);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#adhd-final-overlay.visible .bunny-svg {
+  transform: scale(1);
+}
+
+#adhd-final-overlay .final-message {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 24px;
+  max-width: 500px;
+  line-height: 1.4;
+}
+
+#adhd-final-overlay .final-submessage {
+  font-size: 20px;
+  color: #ffb74d;
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+
+#adhd-final-overlay .parent-override {
+  margin-top: 40px;
+  padding: 10px 24px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+#adhd-final-overlay .parent-override::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: rgba(124, 77, 255, 0.3);
+  transition: none;
+}
+
+#adhd-final-overlay .parent-override.holding::before {
+  width: 100%;
+  transition: width 3s linear;
+}
+
+#adhd-final-overlay .parent-override:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Hide Netflix next-episode / autoplay UI when on last allowed episode */
+html.adhd-block-autoplay button[data-uia="player-next-episode"],
+html.adhd-block-autoplay button[data-uia*="next-episode"],
+html.adhd-block-autoplay div[data-uia*="autoplay"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  #adhd-bunny-container {
+    transition: right 0.3s ease;
+  }
+
+  #adhd-bunny-container.visible .bunny-svg {
+    animation: none;
+  }
+
+  #adhd-bunny-container .speech-bubble {
+    transition: opacity 0.2s ease;
+  }
+
+  #adhd-final-overlay {
+    transition: opacity 0.5s ease;
+  }
+
+  #adhd-timer-overlay .timer-circle {
+    transition: transform 0.3s ease;
+  }
+
+  #adhd-timer-overlay {
+    transition: none;
+  }
+}
