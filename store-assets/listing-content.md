@@ -45,6 +45,9 @@ Stores user preferences (timer duration, bunny name, sound settings) and active 
 ### activeTab
 Required to inject the timer overlay and bunny character onto the active Netflix tab when the user starts a timer from the popup.
 
+### scripting
+Used to programmatically inject the timer overlay when Netflix navigates between pages without a full reload (single-page app navigation). Without this, the timer would not appear until the user manually refreshes the page.
+
 ### tabs
 Used to detect Netflix tab navigation (episode changes) and to communicate between the popup and the content script running on Netflix. Required for episode counting mode to track when a new episode begins.
 

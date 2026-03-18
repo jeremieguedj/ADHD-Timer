@@ -1,6 +1,10 @@
 (() => {
   'use strict';
 
+  // Prevent double-injection (e.g., when programmatically injected on SPA navigation)
+  if (window._adhdTimerLoaded) return;
+  window._adhdTimerLoaded = true;
+
   // State
   let state = null;
   let video = null;

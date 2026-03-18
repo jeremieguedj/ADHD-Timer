@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "ADHD Netflix Timer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gentle, kid-friendly screen time reminders for Netflix with an animated bunny character",
-  "permissions": ["storage", "activeTab", "tabs", "webNavigation"],
+  "permissions": ["storage", "activeTab", "tabs", "webNavigation", "scripting"],
   "host_permissions": ["https://www.netflix.com/*"],
   "action": {
     "default_popup": "popup.html",

@@ -1,3 +1,13 @@
+// Ensure content script is injected and send message to a Netflix tab.
+// If sendMessage fails (content script not present due to SPA navigation),
+// inject it programmatically — it reads timer state from storage on load.
+function sendToTab(tabId, message) {
+  chrome.tabs.sendMessage(tabId, message).catch(() => {
+    chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] }).catch(() => {});
+    chrome.scripting.insertCSS({ target: { tabId }, files: ['content.css'] }).catch(() => {});
+  });
+}
+
 const modeRadios = document.querySelectorAll('input[name="mode"]');
 const timeSettings = document.getElementById('time-settings');
 const episodeSettings = document.getElementById('episode-settings');
@@ -230,7 +240,7 @@ function startTimer() {
     // Send to ALL Netflix watch tabs
     chrome.tabs.query({ url: 'https://www.netflix.com/watch/*' }, (tabs) => {
       tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, { type: 'ADHD_TIMER_START', data }).catch(() => {});
+        sendToTab(tab.id, { type: 'ADHD_TIMER_START', data });
       });
     });
   });
@@ -369,7 +379,7 @@ function doExtend() {
       // Notify all Netflix tabs
       chrome.tabs.query({ url: 'https://www.netflix.com/watch/*' }, (tabs) => {
         tabs.forEach(tab => {
-          chrome.tabs.sendMessage(tab.id, { type: 'ADHD_TIMER_START', data }).catch(() => {});
+          sendToTab(tab.id, { type: 'ADHD_TIMER_START', data });
         });
       });
     });

@@ -1,3 +1,9 @@
+// Inject content script into a tab if not already present
+function ensureContentScript(tabId) {
+  chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] }).catch(() => {});
+  chrome.scripting.insertCSS({ target: { tabId }, files: ['content.css'] }).catch(() => {});
+}
+
 // Track Netflix SPA navigation to count episodes
 let lastVideoId = null;
 
@@ -12,6 +18,13 @@ chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
 
   const previousVideoId = lastVideoId;
   lastVideoId = videoId;
+
+  // Ensure content script is injected on SPA navigations (Netflix doesn't do full page loads)
+  chrome.storage.local.get(['adhdTimer'], (result) => {
+    if (result.adhdTimer && result.adhdTimer.active) {
+      ensureContentScript(details.tabId);
+    }
+  });
 
   // Only count if we had a previous video (i.e., this is a navigation, not first load)
   if (!previousVideoId) return;
